@@ -24,8 +24,34 @@ sudo curl -sSL https://raw.githubusercontent.com/Irmb7108/privado-wg-tool/main/f
 
 ---
 
-## Browser Bookmarklet (One-Click Downloader)
+متن لاتین اصلاح‌شده زیر دقیقاً به کاربر می‌گوید که نیازی به کد طولانی نیست و فقط کافی است محتوای فایل privado-downloader.js را برای هر دو روش کپی و استفاده کند:
 
+Browser Automation Setup (Auto-Downloader)
+You can automate the download of all 10 profiles using the code stored in privado-downloader.js. Choose either method below:
+
+Method 1: One-Click Bookmarklet (Recommended)
+Open privado-downloader.js and copy its entire raw code.
+
+Show your browser bookmarks bar (Ctrl + Shift + B).
+
+Right-click the bar and choose Add Page (or Add Bookmark).
+
+Set the Name to: ⚡ Download 10 Privado
+
+In the URL field, type javascript: and immediately paste the copied code after it.
+
+Click Save. When on the PrivadoVPN WireGuard panel, simply click this bookmark to start downloading.
+
+Method 2: DevTools Snippets (Console)
+Open the PrivadoVPN WireGuard panel and press F12.
+
+Go to the Sources tab, click the >> icon in the left pane, and choose Snippets.
+
+Click + New snippet, name it privado-downloader, and paste the contents of privado-downloader.js.
+
+Press Ctrl + S to save.
+
+Press Ctrl + Enter anytime you want to run the script and download all configs.
 
 ---
 
