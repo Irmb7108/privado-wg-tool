@@ -12,9 +12,6 @@ Automated toolchain to download, sanitize, patch, and package PrivadoVPN WireGua
 
 ---
 
-Automated toolchain to download, sanitize, patch, and package PrivadoVPN WireGuard profiles with AmneziaWG obfuscation for WG Tunnel.
-
----
 
 ## Features
 
