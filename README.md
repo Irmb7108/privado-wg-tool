@@ -64,7 +64,9 @@ Press Ctrl + Enter anytime you want to run the script and download all configs.
 ---
 
 ## CLI Options
-
+```bash
+fix-privado
+```
 fix-privado -h : Show help and usage details
 fix-privado -v : Show version
 fix-privado -c : Clean output folder and zip file
