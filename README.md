@@ -4,9 +4,7 @@
 
 <img src="assets/preview.png" alt="Privado Toolchain Preview" width="700">
 
-<p>
-Automated toolchain to download, sanitize, patch, and package PrivadoVPN WireGuard profiles with AmneziaWG obfuscation for WG Tunnel.
-</p>
+<p>Automated PrivadoVPN WireGuard & AmneziaWG patcher for WG Tunnel.</p>
 
 </div>
 
@@ -48,7 +46,7 @@ sudo curl -sSL [https://raw.githubusercontent.com/Irmb7108/privado-wg-tool/main/
 Browser Automation Setup (Auto-Downloader)
 You can automate the download of all 10 profiles using the code stored in privado-downloader.js. Choose either method below:
 
-##Method 1: One-Click Bookmarklet (Recommended)
+## Method 1: One-Click Bookmarklet (Recommended)
 Open privado-downloader.js and copy its entire raw code.
 
 Show your browser bookmarks bar (Ctrl + Shift + B).
@@ -61,7 +59,7 @@ In the URL field, type javascript: and immediately paste the copied code after i
 
 Click Save.
 
-##Method 2: DevTools Snippets (Console)
+## Method 2: DevTools Snippets (Console)
 Open the PrivadoVPN WireGuard panel and press F12.
 
 Go to the Sources tab, click the >> icon in the left pane, and choose Snippets.
