@@ -1,4 +1,16 @@
+<div align="center">
+
 # PrivadoVPN WireGuard / AmneziaWG Toolchain
+
+<img src="assets/preview.png" alt="Privado Toolchain Preview" width="700">
+
+<p>
+Automated toolchain to download, sanitize, patch, and package PrivadoVPN WireGuard profiles with AmneziaWG obfuscation for WG Tunnel.
+</p>
+
+</div>
+
+---
 
 <p align="center">
   <img src="assets/preview.png" alt="Privado Toolchain Preview" width="700">
