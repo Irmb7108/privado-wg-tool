@@ -26,9 +26,6 @@ sudo curl -sSL https://raw.githubusercontent.com/Irmb7108/privado-wg-tool/main/f
 
 ## Browser Bookmarklet (One-Click Downloader)
 
-Create a new browser bookmark and set the URL to:
-
-javascript:(async function(){const e=["Amsterdam","Brussels","Istanbul","Washington","Mexico City","Mumbai","Seoul","Singapore","Tokyo","Toronto"],t=document.getElementById("id_city_wg");if(!t)return void alert("Menu not found!");const n=Array.from(document.querySelectorAll("button, input[type='submit'], a")).find((e=>e.textContent.trim().toLowerCase().includes("download configuration")||e.value?.toLowerCase().includes("download")));if(!n)return void alert("Download button not found!");const o=Array.from(t.options);for(let a=0;a<e.length;a++){const r=e[a],i=o.find((e=>e.text.toLowerCase().includes(r.toLowerCase())));i&&(t.value=i.value,t.dispatchEvent(new Event("change",{bubbles:!0})),await new Promise((e=>setTimeout(e,600))),n.click(),await new Promise((e=>setTimeout(e,2500))) )}})();
 
 ---
 
