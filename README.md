@@ -19,9 +19,9 @@ Automated toolchain to download, sanitize, patch, and package PrivadoVPN WireGua
 ## Installation (Arch Linux / Linux)
 
 Run this command to install the CLI tool:
-
+```bash
 sudo curl -sSL https://raw.githubusercontent.com/Irmb7108/privado-wg-tool/main/fix-privado -o /usr/local/bin/fix-privado && sudo chmod +x /usr/local/bin/fix-privado
-
+```
 ---
 ## Browser Automation Setup (Auto-Downloader)
 You can automate the download of all 10 profiles using the code stored in privado-downloader.js. Choose either method below:
