@@ -68,3 +68,17 @@ Press Ctrl + Enter anytime you want to run the script and download all configs.
 fix-privado -h : Show help and usage details
 fix-privado -v : Show version
 fix-privado -c : Clean output folder and zip file
+
+
+
+## WG Tunnel Installation & Service Management
+Installation (Arch Linux / CachyOS)
+Install WG Tunnel directly from the AUR using your preferred helper:
+```bash
+yay -S wgtunnel-bin
+```
+Service Management (Systemd)
+Start and enable the background daemon service:
+```bash
+sudo systemctl start wgtunnel
+```
