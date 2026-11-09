@@ -1,0 +1,198 @@
+#!/bin/bash
+set -e
+
+VERSION="2.0.0"
+TARGET_DIR="wgtunnel"
+ZIP_NAME="wgtunnel-import.zip"
+
+show_help() {
+  cat <<EOF
+fix-privado - PrivadoVPN WireGuard / AmneziaWG Config Optimizer (v${VERSION})
+
+USAGE:
+    fix-privado [OPTIONS]
+
+DESCRIPTION:
+    Processes and patches downloaded PrivadoVPN WireGuard (.conf) profiles.
+    - Strips 'privado' branding and maps airport codes directly from filenames.
+    - Outputs files formatted as 'City Code' (e.g. 'Auckland akl-012.conf').
+    - Injects AmneziaWG obfuscation parameters (Jc, Jmin, Jmax, S1, S2, H1-H4).
+    - Sets ultra-fast DNS resolvers (1.1.1.1, 8.8.8.8).
+    - Appends PersistentKeepalive = 25.
+    - Packages cleanly named profiles into '$ZIP_NAME'.
+    - Automatically purges files older than 3 days.
+
+OPTIONS:
+    -h, --help       Show this help message and exit
+    -v, --version    Show version information
+    -c, --clean      Purge output folder and zip archive
+EOF
+}
+
+case "$1" in
+-h | --help)
+  show_help
+  exit 0
+  ;;
+-v | --version)
+  echo "fix-privado v${VERSION}"
+  exit 0
+  ;;
+-c | --clean)
+  rm -rf "$TARGET_DIR" "$ZIP_NAME"
+  echo "[*] Cleaned output."
+  exit 0
+  ;;
+esac
+
+# Auto-delete configurations older than 3 days
+find . -maxdepth 2 -type f -name "*.conf" -mtime +3 -delete 2>/dev/null || true
+
+rm -rf "$TARGET_DIR" "$ZIP_NAME"
+mkdir -p "$TARGET_DIR"
+count=0
+
+# Airport code to full city mapping
+get_city_name() {
+  local code="$1"
+  case "$code" in
+  # Europe
+  ams) echo "Amsterdam" ;;
+  ath) echo "Athens" ;;
+  beg) echo "Belgrade" ;;
+  ber | txl) echo "Berlin" ;;
+  bts) echo "Bratislava" ;;
+  bru) echo "Brussels" ;;
+  otp) echo "Bucharest" ;;
+  bud) echo "Budapest" ;;
+  cph) echo "Copenhagen" ;;
+  dub) echo "Dublin" ;;
+  fra) echo "Frankfurt" ;;
+  gva) echo "Geneva" ;;
+  hel) echo "Helsinki" ;;
+  ist | saw) echo "Istanbul" ;;
+  kie) echo "Kyiv" ;;
+  lis) echo "Lisbon" ;;
+  lon | lhr | lgw) echo "London" ;;
+  mad) echo "Madrid" ;;
+  man) echo "Manchester" ;;
+  mil | mxp) echo "Milan" ;;
+  osl) echo "Oslo" ;;
+  par | cdg | ory) echo "Paris" ;;
+  prg) echo "Prague" ;;
+  rey | kef) echo "Reykjavik" ;;
+  rom | fco) echo "Rome" ;;
+  sof) echo "Sofia" ;;
+  sto | arn) echo "Stockholm" ;;
+  vie) echo "Vienna" ;;
+  waw) echo "Warsaw" ;;
+  zag) echo "Zagreb" ;;
+  zur) echo "Zurich" ;;
+
+  # Americas
+  atl) echo "Atlanta" ;;
+  bos) echo "Boston" ;;
+  chi | ord) echo "Chicago" ;;
+  dal | dfw) echo "Dallas" ;;
+  den) echo "Denver" ;;
+  lax) echo "Los Angeles" ;;
+  mia) echo "Miami" ;;
+  nyc | jfk | ewr) echo "New York" ;;
+  phx) echo "Phoenix" ;;
+  sea) echo "Seattle" ;;
+  sfo) echo "San Francisco" ;;
+  sjc) echo "San Jose" ;;
+  las) echo "Las Vegas" ;;
+  dca | iad) echo "Washington DC" ;;
+  mex) echo "Mexico City" ;;
+  yyz) echo "Toronto" ;;
+  yul) echo "Montreal" ;;
+  yvr) echo "Vancouver" ;;
+  bog) echo "Bogota" ;;
+  eze | bue) echo "Buenos Aires" ;;
+  lim) echo "Lima" ;;
+  gru | sao) echo "Sao Paulo" ;;
+  scl) echo "Santiago" ;;
+
+  # Asia & Middle East
+  bkk) echo "Bangkok" ;;
+  dxb) echo "Dubai" ;;
+  hkg) echo "Hong Kong" ;;
+  kwi) echo "Kuwait" ;;
+  kul) echo "Kuala Lumpur" ;;
+  bom) echo "Mumbai" ;;
+  del) echo "New Delhi" ;;
+  ruh) echo "Riyadh" ;;
+  icn) echo "Seoul" ;;
+  sin) echo "Singapore" ;;
+  tlv) echo "Tel Aviv" ;;
+  tok | nrt | hnd | tyo) echo "Tokyo" ;;
+
+  # Africa & Oceania
+  akl) echo "Auckland" ;;
+  bne) echo "Brisbane" ;;
+  cpt) echo "Cape Town" ;;
+  jnb) echo "Johannesburg" ;;
+  mel) echo "Melbourne" ;;
+  per) echo "Perth" ;;
+  syd) echo "Sydney" ;;
+
+  *) echo "Server" ;;
+  esac
+}
+
+echo "[*] Processing WireGuard configurations..."
+
+for f in *.conf; do
+  [ -f "$f" ] || continue
+
+  # Extract pattern 'akl-012' from 'privado.akl-012.conf' or fallback to Endpoint
+  raw_tag=$(basename "$f" .conf | grep -oE '[a-zA-Z]{3}-[0-9]+' | head -n 1 || true)
+
+  if [ -z "$raw_tag" ]; then
+    raw_tag=$(grep -E -i '^[[:space:]]*Endpoint' "$f" | head -n 1 | awk -F'=' '{print $2}' | tr -d ' ' | cut -d':' -f1 | grep -oE '[a-zA-Z]{3}-[0-9]+' | head -n 1 || true)
+  fi
+
+  if [ -n "$raw_tag" ]; then
+    code=$(echo "$raw_tag" | cut -d'-' -f1 | tr '[:upper:]' '[:lower:]')
+    city=$(get_city_name "$code")
+    clean_title="${city} ${raw_tag}"
+  else
+    clean_title="Server-$count"
+  fi
+
+  new_filename="${clean_title}.conf"
+
+  # Avoid duplicate name collisions
+  if [ -f "$TARGET_DIR/$new_filename" ]; then
+    new_filename="${clean_title}-${count}.conf"
+  fi
+
+  dest="$TARGET_DIR/$new_filename"
+  cp "$f" "$dest"
+
+  # 1. Update DNS
+  sed -i 's|^[[:space:]]*DNS[[:space:]]*=.*|DNS = 1.1.1.1, 8.8.8.8|' "$dest"
+
+  # 2. Inject AmneziaWG obfuscation parameters
+  if ! grep -q "^Jc =" "$dest"; then
+    sed -i '/DNS =/a MTU = 1280\nJc = 4\nJmin = 40\nJmax = 70\nS1 = 0\nS2 = 0\nH1 = 1\nH2 = 2\nH3 = 3\nH4 = 4' "$dest"
+  fi
+
+  # 3. Add PersistentKeepalive
+  if ! grep -q "^PersistentKeepalive" "$dest"; then
+    printf "\nPersistentKeepalive = 25\n" >>"$dest"
+  fi
+
+  echo "  [+] Processed: $f -> ${new_filename}"
+  count=$((count + 1))
+done
+
+if [ "$count" -gt 0 ]; then
+  (cd "$TARGET_DIR" && zip -q "../$ZIP_NAME" *.conf)
+  echo ""
+  echo "[+] SUCCESS: Successfully packed $count files into '${ZIP_NAME}'."
+else
+  echo "[-] ERROR: No .conf files found in current directory."
+  exit 1
+fi
